@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CameraMove : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class CameraMove : MonoBehaviour
     private float maxX = 20f;
     private float minZ = -15f;
     private float maxZ = 20f;
+
+    [SerializeField] BedController bedController;
 
     void Update()
     {
@@ -43,6 +46,30 @@ public class CameraMove : MonoBehaviour
             }
 
             transform.position = new Vector3(Mathf.Clamp(newPosition.x, minX, maxX), newPosition.y, Mathf.Clamp(newPosition.z, minZ, maxZ));
+        }
+
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.collider.CompareTag("BedCol"))
+                {
+                    bedController.SetupBed(hit.collider.gameObject);
+                }
+            }
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            bedController.ClearBed();
         }
     }
 }

@@ -6,22 +6,19 @@ using Unity.VisualScripting;
 
 public class InventoryItem : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHandler
 {
-    Image itemIcon;
-    int itemCount = 0;
-    TMP_Text countText;
+    [SerializeField] Image itemIcon;
+    [SerializeField] TMP_Text countText;
+
+    public FlowerData flowerData;
+    public int itemCount = 0;
 
     [HideInInspector] public Transform parentAfterDrag;
 
-    private void Awake()
-    {
-        itemIcon = transform.GetChild(0).GetComponent<Image>();
-        countText = transform.GetChild(1).GetComponent<TMP_Text>();
-    }
-
-    public void SetupSlot(Sprite icon, int count)
+    public void SetupSlot(Sprite icon, int count, FlowerData data)
     {
         itemIcon.sprite = icon;
         itemCount = count;
+        flowerData = data;
         countText.text = itemCount.ToString();
     }
 

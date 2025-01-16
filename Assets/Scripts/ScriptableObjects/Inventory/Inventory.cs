@@ -11,5 +11,6 @@ public class Inventory : ScriptableObject
 public class InventorySystem
 {
     public FlowerData item;
+    public bool isSeed;
     public int count;
 }

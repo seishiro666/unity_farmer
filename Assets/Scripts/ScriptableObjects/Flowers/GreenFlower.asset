@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flowerName: GreenFlower
   icon: {fileID: 21300000, guid: 6a2b654d0615b924a96dd706e293c039, type: 3}
+  seedIcon: {fileID: 21300000, guid: dc32ffe62c1d53a43ac72346552e0b1b, type: 3}
   model: {fileID: 7503106297119791315, guid: ac5739b6bd0497446846b833e965207b, type: 3}
   seedGrowth: 5
   growth: 10
