@@ -14,7 +14,7 @@ public enum State
 
 public class BedWork : MonoBehaviour
 {
-    public static Action<bool, string> onBedClick;
+    public static Action<int, string> onBedClick;
 
     [SerializeField] GameObject flowerPos;
 
@@ -22,13 +22,20 @@ public class BedWork : MonoBehaviour
     FlowerData flowerData;
     GameObject flowerObj;
     List<GameObject> flowersList = new List<GameObject>();
+    bool haveSeed = false;
 
     public void SetupBed()
     {
         if (currentState == State.Empty)
         {
-            onBedClick?.Invoke(true, "Посадить");
+            onBedClick?.Invoke(0, "Посадить");
             OnSetup();
+        } else if (currentState == State.MaturePlant)
+        {
+            onBedClick?.Invoke(1, "Собрать");
+        } else if (currentState == State.ReadyToHarvest)
+        {
+            onBedClick?.Invoke(1, "Собрать");
         }
     }
 
@@ -70,14 +77,22 @@ public class BedWork : MonoBehaviour
         }
         currentState = State.MaturePlant;
 
-        yield return new WaitForSeconds(flowerData.growth);
+        haveSeed = true;
+    }
 
-        foreach (GameObject flower in flowersList)
+    IEnumerator EndGrowth()
+    {
+        if (!haveSeed)
         {
-            flower.transform.GetChild(2).gameObject.SetActive(false);
-            flower.transform.GetChild(3).gameObject.SetActive(true);
+            yield return new WaitForSeconds(flowerData.growth);
+
+            foreach (GameObject flower in flowersList)
+            {
+                flower.transform.GetChild(2).gameObject.SetActive(false);
+                flower.transform.GetChild(3).gameObject.SetActive(true);
+            }
+            currentState = State.ReadyToHarvest;
         }
-        currentState = State.ReadyToHarvest;
     }
 
     private void OnSetup()

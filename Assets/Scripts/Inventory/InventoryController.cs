@@ -23,7 +23,7 @@ public class InventoryController : MonoBehaviour
         bedInventoryUI = inventoryUI.transform.GetChild(3);
     }
 
-    void UpdateSlots(bool onlySeed, string actionBtnText)
+    void UpdateSlots(int typeOfItems, string actionBtnText)
     {
         ClearSlots();
 
@@ -34,13 +34,13 @@ public class InventoryController : MonoBehaviour
                 InventorySystem itemData = inventory.inventorySystem[i];
                 GameObject slot = slotObjects[i];
 
-                if (onlySeed && itemData.isSeed)
+                if (typeOfItems == 0 && itemData.isSeed)
                 {
                     GameObject tempItem = Instantiate(itemPrefab, slot.transform);
                     InventoryItem inventoryItem = tempItem.GetComponent<InventoryItem>();
                     inventoryItem.SetupSlot(itemData.item.seedIcon, itemData.count, itemData.item);
                 }
-                else if (!onlySeed)
+                else if (typeOfItems != 0)
                 {
                     GameObject tempItem = Instantiate(itemPrefab, slot.transform);
                     InventoryItem inventoryItem = tempItem.GetComponent<InventoryItem>();
@@ -50,7 +50,7 @@ public class InventoryController : MonoBehaviour
             }
         }
 
-        if (onlySeed)
+        if (typeOfItems <= 1)
         {
             inventoryUI.transform.localPosition = new Vector3(200, 0, 0);
             bedInventoryUI.gameObject.SetActive(true);
@@ -112,7 +112,7 @@ public class InventoryController : MonoBehaviour
             }
         }
 
-        UpdateSlots(false, "1");
+        UpdateSlots(2, "1");
     }
 
     void SubToBedBtnEvent()
@@ -137,9 +137,9 @@ public class InventoryController : MonoBehaviour
         }
     }
 
-    void OnBedClicked(bool onlySeed, string actionBtnText)
+    void OnBedClicked(int numOfItem, string actionBtnText)
     {
-        UpdateSlots(onlySeed, actionBtnText);
+        UpdateSlots(numOfItem, actionBtnText);
     }
 
     private void OnEnable()
