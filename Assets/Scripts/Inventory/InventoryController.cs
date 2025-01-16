@@ -16,7 +16,7 @@ public class InventoryController : MonoBehaviour
     int MaxStackSize = 32;
     Transform bedInventoryUI;
 
-    public static Action onBedBtnClick;
+    public static Action<InventoryItem> onBedBtnClick;
 
     private void Awake()
     {
@@ -117,7 +117,8 @@ public class InventoryController : MonoBehaviour
 
     void SubToBedBtnEvent()
     {
-        if (bedSlot.transform.childCount > 0 && bedSlot.transform.GetChild(0).GetComponent<InventoryItem>().itemCount >= 4) onBedBtnClick?.Invoke();
+        if (bedSlot.transform.childCount > 0 && bedSlot.transform.GetChild(0).GetComponent<InventoryItem>().itemCount >= 4) 
+            onBedBtnClick?.Invoke(bedSlot.transform.GetChild(0).GetComponent<InventoryItem>());
     }
 
     void ClearSlots()
