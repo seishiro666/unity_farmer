@@ -8,7 +8,6 @@ public class CameraMove : MonoBehaviour
     bool isMove = false;
     public List<Transform> edges = new List<Transform>();
 
-    // Ограничения по осям
     private float minX = -20f;
     private float maxX = 20f;
     private float minZ = -15f;

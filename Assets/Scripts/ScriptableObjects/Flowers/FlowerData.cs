@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewFlower", menuName = "Inventory/Flower")]
+[CreateAssetMenu(fileName = "NewFlower", menuName = "ScriptableObject/Flower")]
 public class FlowerData : ScriptableObject
 {
     public string flowerName;

@@ -1,32 +1,44 @@
-using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 public class InventoryController : MonoBehaviour
 {
     [SerializeField] Inventory inventory;
-    [SerializeField] List<FlowerData> items;
-    [SerializeField] GameObject slotPrefab;
-    [SerializeField] GameObject slots;
+    [SerializeField] List<GameObject> slotObjects;
+    [SerializeField] GameObject itemPrefab;
 
-    public void AddItem()
+    private void Start()
+    {
+        UpdateSlots();
+    }
+
+    public void UpdateSlots()
     {
         ClearSlots();
 
-        foreach (var item in inventory.inventorySystem)
+        for (int i = 0; i < inventory.inventorySystem.Count; i++)
         {
-            GameObject tempSlot = Instantiate(slotPrefab, slots.transform);
-            tempSlot.GetComponent<InventorySlot>().SetupSlot(item.item.icon, item.count);   
+            if (i < slotObjects.Count)
+            {
+                InventorySystem item = inventory.inventorySystem[i];
+                GameObject slot = slotObjects[i];
+                GameObject tempItem = Instantiate(itemPrefab, slot.transform);
+                InventoryItem inventoryItem = tempItem.GetComponent<InventoryItem>();
+                inventoryItem.SetupSlot(item.item.icon, item.count);
+            }
         }
     }
 
-    void ClearSlots()
+    private void ClearSlots()
     {
-        int numOfChild = slots.transform.childCount;
-
-        for (int i = 0; i < numOfChild; i++) 
+        foreach (GameObject slot in slotObjects)
         {
-            Destroy(slots.transform.GetChild(i).gameObject);
+            if (slot.transform.childCount > 0)
+            {
+                Destroy(slot.transform.GetChild(0).gameObject);
+            }
         }
     }
 }

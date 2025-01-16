@@ -11,7 +11,7 @@ public class BedSpawner : MonoBehaviour
     float spacingRows = 5f;
     int rows, cols;
 
-    void Start()
+    public void StartSpawn()
     {
         rows = 2;
         cols = 3;

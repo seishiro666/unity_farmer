@@ -15,3 +15,5 @@ MonoBehaviour:
   inventorySystem:
   - item: {fileID: 11400000, guid: d9de3566703514845ab362486a56fb63, type: 2}
     count: 5
+  - item: {fileID: 11400000, guid: 8e93509fd50e4254b82338af7a90f4e2, type: 2}
+    count: 15
