@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewFlower", menuName = "ScriptableObject/Flower")]
@@ -9,4 +10,5 @@ public class FlowerData : ScriptableObject
     public GameObject model;
     public float seedGrowth;
     public float growth;
+    public List<FlowerData> potentialSeeds;
 }

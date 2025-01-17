@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.WSA;
 using static UnityEditor.Progress;
 
 public class InventoryController : MonoBehaviour
@@ -16,7 +18,7 @@ public class InventoryController : MonoBehaviour
     int MaxStackSize = 32;
     Transform bedInventoryUI;
 
-    public static Action<InventoryItem> onBedBtnClick;
+    public static Action<InventoryItem, GameObject, GameObject, InventoryController, InventorySystem> onBedBtnClick;
 
     private void Awake()
     {
@@ -26,26 +28,27 @@ public class InventoryController : MonoBehaviour
     void UpdateSlots(int typeOfItems, string actionBtnText)
     {
         ClearSlots();
+        InventorySystem itemData = null;
 
         for (int i = 0; i < inventory.inventorySystem.Count; i++)
         {
             if (i < slotObjects.Count)
             {
-                InventorySystem itemData = inventory.inventorySystem[i];
+                itemData = inventory.inventorySystem[i];
                 GameObject slot = slotObjects[i];
 
                 if (typeOfItems == 0 && itemData.isSeed)
                 {
                     GameObject tempItem = Instantiate(itemPrefab, slot.transform);
                     InventoryItem inventoryItem = tempItem.GetComponent<InventoryItem>();
-                    inventoryItem.SetupSlot(itemData.item.seedIcon, itemData.count, itemData.item);
+                    inventoryItem.SetupSlot(itemData.item.seedIcon, itemData.count, itemData);
                 }
                 else if (typeOfItems != 0)
                 {
                     GameObject tempItem = Instantiate(itemPrefab, slot.transform);
                     InventoryItem inventoryItem = tempItem.GetComponent<InventoryItem>();
                     Sprite itemIcon = itemData.isSeed ? itemData.item.seedIcon : itemData.item.icon;
-                    inventoryItem.SetupSlot(itemIcon, itemData.count, itemData.item);
+                    inventoryItem.SetupSlot(itemIcon, itemData.count, itemData);
                 }
             }
         }
@@ -54,7 +57,7 @@ public class InventoryController : MonoBehaviour
         {
             inventoryUI.transform.localPosition = new Vector3(200, 0, 0);
             bedInventoryUI.gameObject.SetActive(true);
-            bedInventoryUI.GetChild(1).GetComponent<Button>().onClick.AddListener( delegate { SubToBedBtnEvent(); } );
+            bedInventoryUI.GetChild(1).GetComponent<Button>().onClick.AddListener( delegate { SubToBedBtnEvent(itemData); } );
             bedInventoryUI.GetChild(1).GetChild(0).GetComponent<TMP_Text>().text = actionBtnText;
         }
         else
@@ -66,59 +69,22 @@ public class InventoryController : MonoBehaviour
         inventoryUI.SetActive(true);
     }
 
-    private void AddItemToSlots(FlowerData item, int count)
+    public void AddItemToBedSlot(InventorySystem item, int count, bool isBedAdd)
     {
-        while (count > 0)
+        if (bedSlot.transform.childCount == 0)
         {
-            bool addToExistSlot = false;
-            foreach (var slotObject in slotObjects)
-            {
-                if (slotObject.transform.childCount > 0)
-                {
-                    InventoryItem inventoryItem = slotObject.transform.GetChild(0).GetComponent<InventoryItem>();
-                    if (inventoryItem != null && 
-                       (inventoryItem.GetComponent<Image>().sprite == item.icon || inventoryItem.GetComponent<Image>().sprite == item.seedIcon) && 
-                        inventoryItem.itemCount < MaxStackSize)
-                    {
-                        int spaceLeft = MaxStackSize - inventoryItem.itemCount;
-                        int amountToAdd = Mathf.Min(count, spaceLeft);
-                        inventoryItem.IncreaseCount(amountToAdd);
-                        count -= amountToAdd;
-                        addToExistSlot = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!addToExistSlot)
-            {
-                foreach (var slotObject in slotObjects)
-                {
-                    if (slotObject.transform.childCount == 0)
-                    {
-                        GameObject newItem = Instantiate(itemPrefab, slotObject.transform);
-                        InventoryItem inventoryItem = newItem.GetComponent<InventoryItem>();
-                        inventoryItem.SetupSlot(item.icon, Mathf.Min(count, MaxStackSize), item);
-                        count -= Mathf.Min(count, MaxStackSize);
-                        break;
-                    }
-                }
-            }
-
-            if (!addToExistSlot && count > 0)
-            {
-                Debug.Log("Полный инвентарь");
-                break;
-            }
+            GameObject newItem = Instantiate(itemPrefab, bedSlot.transform);
+            InventoryItem inventoryItem = newItem.GetComponent<InventoryItem>();
+            inventoryItem.SetupSlot(item.item.icon, Mathf.Min(count, MaxStackSize), item);
+            count -= Mathf.Min(count, MaxStackSize);
         }
-
-        UpdateSlots(2, "1");
     }
 
-    void SubToBedBtnEvent()
+    void SubToBedBtnEvent(InventorySystem itemInventoryData)
     {
         if (bedSlot.transform.childCount > 0 && bedSlot.transform.GetChild(0).GetComponent<InventoryItem>().itemCount >= 4) 
-            onBedBtnClick?.Invoke(bedSlot.transform.GetChild(0).GetComponent<InventoryItem>());
+            onBedBtnClick?.Invoke(bedSlot.transform.GetChild(0).GetComponent<InventoryItem>(), 
+                bedSlot, itemPrefab, gameObject.GetComponent<InventoryController>(), itemInventoryData);
     }
 
     void ClearSlots()

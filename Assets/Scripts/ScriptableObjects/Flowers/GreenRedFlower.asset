@@ -18,3 +18,5 @@ MonoBehaviour:
   model: {fileID: 100000, guid: ef6cf0ef13207fa498bc3fa1aadc050e, type: 3}
   seedGrowth: 10
   growth: 20
+  potentialSeeds:
+  - {fileID: 11400000}

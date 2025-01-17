@@ -20,9 +20,13 @@ public class BedWork : MonoBehaviour
 
     State currentState = State.Empty;
     FlowerData flowerData;
+    InventoryItem flowerItemData;
     GameObject flowerObj;
     List<GameObject> flowersList = new List<GameObject>();
     bool haveSeed = false;
+    GameObject bedSlot;
+    GameObject itemPrefab;
+    InventoryController inventoryController;
 
     public void SetupBed()
     {
@@ -39,25 +43,37 @@ public class BedWork : MonoBehaviour
         }
     }
 
-    void StartGrowth(InventoryItem itemData)
+    void StartGrowth(InventoryItem itemData, GameObject bedSlotUI, 
+        GameObject itemInSlotPrefab, InventoryController invController,
+        InventorySystem inventorySystem)
     {
-        flowerData = itemData.flowerData;
-        
-        flowerObj = flowerData.model;
-        
-        for (int i = 0; i < 4; i++)
+        inventoryController = invController;
+        flowerItemData = itemData;
+        flowerData = flowerItemData.flowerData;
+        bedSlot = bedSlotUI;
+        itemPrefab = itemInSlotPrefab;
+
+        if (itemData.itemCount >= 4)
         {
-            GameObject tempFlower = Instantiate(flowerObj, flowerPos.transform.GetChild(i));
-            flowersList.Add(tempFlower);
+            itemData.itemCount -= 4;
+            itemData.RefreshItem(itemData.itemCount);
+
+            flowerObj = flowerData.model;
+
+            for (int i = 0; i < 4; i++)
+            {
+                GameObject tempFlower = Instantiate(flowerObj, flowerPos.transform.GetChild(i));
+                flowersList.Add(tempFlower);
+            }
+            currentState = State.SeedPlanted;
+
+            OnEndSetup();
+
+            StartCoroutine(StartGrowthProcess(itemData.itemCount, inventorySystem));
         }
-        currentState = State.SeedPlanted;
-
-        OnEndSetup();
-
-        StartCoroutine(StartGrowthProcess());
     }
 
-    IEnumerator StartGrowthProcess()
+    IEnumerator StartGrowthProcess(int itemCount, InventorySystem inventorySystem)
     {
         yield return new WaitForSeconds(5f);
 
@@ -78,6 +94,8 @@ public class BedWork : MonoBehaviour
         currentState = State.MaturePlant;
 
         haveSeed = true;
+
+        inventoryController.AddItemToBedSlot(inventorySystem, itemCount, true);
     }
 
     IEnumerator EndGrowth()

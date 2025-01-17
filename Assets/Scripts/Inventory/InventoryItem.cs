@@ -9,16 +9,18 @@ public class InventoryItem : MonoBehaviour, IDragHandler, IEndDragHandler, IBegi
     [SerializeField] Image itemIcon;
     [SerializeField] TMP_Text countText;
 
+    InventorySystem slotData;   
     public FlowerData flowerData;
     public int itemCount = 0;
 
     [HideInInspector] public Transform parentAfterDrag;
 
-    public void SetupSlot(Sprite icon, int count, FlowerData data)
+    public void SetupSlot(Sprite icon, int count, InventorySystem data)
     {
+        slotData = data;
         itemIcon.sprite = icon;
         itemCount = count;
-        flowerData = data;
+        flowerData = data.item;
         countText.text = itemCount.ToString();
     }
 
@@ -27,6 +29,13 @@ public class InventoryItem : MonoBehaviour, IDragHandler, IEndDragHandler, IBegi
         itemIcon.sprite = null;
         countText.text = "";
         itemCount = -1;
+    }
+
+    public void RefreshItem(int count)
+    {
+        itemCount = count;
+        countText.text = itemCount.ToString();
+        slotData.count = count;
     }
 
     public void IncreaseCount(int count)
