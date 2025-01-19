@@ -26,9 +26,7 @@ public class InventoryItem : MonoBehaviour, IDragHandler, IEndDragHandler, IBegi
 
     public void ClearSlot()
     {
-        itemIcon.sprite = null;
-        countText.text = "";
-        itemCount = -1;
+        Destroy(gameObject);
     }
 
     public void RefreshItem(int count)
@@ -42,6 +40,11 @@ public class InventoryItem : MonoBehaviour, IDragHandler, IEndDragHandler, IBegi
     {
         itemCount += count;
         countText.text = itemCount.ToString();
+    }
+
+    public InventorySystem GetInventorySystemData()
+    {
+        return slotData;
     }
 
     public void OnBeginDrag(PointerEventData eventData)

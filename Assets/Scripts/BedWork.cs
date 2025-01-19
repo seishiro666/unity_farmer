@@ -9,7 +9,8 @@ public enum State
     SeedPlanted,
     Sprout,
     MaturePlant,
-    ReadyToHarvest
+    Harvest,
+    End
 }
 
 public class BedWork : MonoBehaviour
@@ -18,12 +19,12 @@ public class BedWork : MonoBehaviour
 
     [SerializeField] GameObject flowerPos;
 
-    State currentState = State.Empty;
+    [SerializeField] State currentState = State.Empty;
     FlowerData flowerData;
     InventoryItem flowerItemData;
     GameObject flowerObj;
     List<GameObject> flowersList = new List<GameObject>();
-    bool haveSeed = false;
+    [SerializeField] bool haveSeed = false;
     GameObject bedSlot;
     GameObject itemPrefab;
     InventoryController inventoryController;
@@ -37,26 +38,31 @@ public class BedWork : MonoBehaviour
         } else if (currentState == State.MaturePlant)
         {
             onBedClick?.Invoke(1, "Собрать");
-        } else if (currentState == State.ReadyToHarvest)
+        } else if (currentState == State.End)
         {
             onBedClick?.Invoke(1, "Собрать");
         }
     }
 
-    void StartGrowth(InventoryItem itemData, GameObject bedSlotUI, 
-        GameObject itemInSlotPrefab, InventoryController invController,
-        InventorySystem inventorySystem)
+    void StartGrowth(InventoryItem itemData, GameObject bedSlotUI, InventoryController invController)
     {
         inventoryController = invController;
         flowerItemData = itemData;
         flowerData = flowerItemData.flowerData;
         bedSlot = bedSlotUI;
-        itemPrefab = itemInSlotPrefab;
 
         if (itemData.itemCount >= 4)
         {
             itemData.itemCount -= 4;
-            itemData.RefreshItem(itemData.itemCount);
+
+            if (itemData.itemCount <= 0)
+            {
+                inventoryController.inventory.inventorySystem.Remove(itemData.GetInventorySystemData());
+                itemData.ClearSlot();
+            } else
+            {
+                itemData.RefreshItem(itemData.itemCount);
+            }
 
             flowerObj = flowerData.model;
 
@@ -69,11 +75,11 @@ public class BedWork : MonoBehaviour
 
             OnEndSetup();
 
-            StartCoroutine(StartGrowthProcess(itemData.itemCount, inventorySystem));
+            StartCoroutine(StartGrowthProcess(itemData));
         }
     }
 
-    IEnumerator StartGrowthProcess(int itemCount, InventorySystem inventorySystem)
+    IEnumerator StartGrowthProcess(InventoryItem itemData)
     {
         yield return new WaitForSeconds(5f);
 
@@ -94,12 +100,46 @@ public class BedWork : MonoBehaviour
         currentState = State.MaturePlant;
 
         haveSeed = true;
+        int seedNum = -1;
+        
+        if (itemData.flowerData.potentialSeeds.Count > 1)
+        {
+            int rndSeed = UnityEngine.Random.Range(1, 11);
 
-        inventoryController.AddItemToBedSlot(inventorySystem, itemCount, true);
+            if (rndSeed >= 1 && rndSeed <= 6)
+            {
+                seedNum = 0;
+            } else if (rndSeed >= 7 && rndSeed <= 8)
+            {
+                seedNum = 1;
+            } else if (rndSeed >= 9 && rndSeed <= 10)
+            {
+                seedNum = 2;
+            }
+        } else
+        {
+            seedNum = 0;
+        }
+
+        FlowerData seedData = itemData.flowerData.potentialSeeds[seedNum];
+        InventorySystem seedInventorySystem = new InventorySystem();
+        seedInventorySystem.item = seedData;
+        seedInventorySystem.count = 4;
+        seedInventorySystem.isSeed = true;
+
+        inventoryController.AddItemToBedSlot(seedInventorySystem, gameObject.GetComponent<BedWork>(), false);
+    }
+
+    public void SwapState()
+    {
+        haveSeed = false;
+        StartCoroutine(EndGrowth());
     }
 
     IEnumerator EndGrowth()
     {
+        currentState = State.Harvest;
+
         if (!haveSeed)
         {
             yield return new WaitForSeconds(flowerData.growth);
@@ -109,8 +149,43 @@ public class BedWork : MonoBehaviour
                 flower.transform.GetChild(2).gameObject.SetActive(false);
                 flower.transform.GetChild(3).gameObject.SetActive(true);
             }
-            currentState = State.ReadyToHarvest;
+            currentState = State.End;
+
+            InventorySystem seedInventorySystem = new InventorySystem();
+            seedInventorySystem.item = flowerData;
+            seedInventorySystem.count = 4;
+            seedInventorySystem.isSeed = false;
+
+            inventoryController.AddItemToBedSlot(seedInventorySystem, gameObject.GetComponent<BedWork>(), true);
         }
+    }
+
+    public void ClearBed()
+    {
+        StopAllCoroutines();
+
+        currentState = State.Empty;
+        haveSeed = false;
+
+        foreach (Transform flower in flowerPos.transform)
+        {
+            foreach (Transform child in flower)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+        flowersList.Clear();
+
+        if (bedSlot != null && bedSlot.transform.childCount > 0)
+        {
+            Destroy(bedSlot.transform.GetChild(0).gameObject);
+        }
+
+        flowerData = null;
+        flowerItemData = null;
+        flowerObj = null;
+
+        OnEndSetup();
     }
 
     private void OnSetup()

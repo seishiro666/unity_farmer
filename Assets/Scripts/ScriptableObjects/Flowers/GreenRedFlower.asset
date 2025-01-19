@@ -15,7 +15,7 @@ MonoBehaviour:
   flowerName: GreenRedFlower
   icon: {fileID: 21300000, guid: 633e6bf1d1f7aba4b8d040cfef3676dd, type: 3}
   seedIcon: {fileID: 21300000, guid: d5095a6ef9ac69148a5089793520aca2, type: 3}
-  model: {fileID: 100000, guid: ef6cf0ef13207fa498bc3fa1aadc050e, type: 3}
+  model: {fileID: 7671802778729514057, guid: d15beb73adccfb74f9ba996eda0bd7d9, type: 3}
   seedGrowth: 10
   growth: 20
   potentialSeeds:

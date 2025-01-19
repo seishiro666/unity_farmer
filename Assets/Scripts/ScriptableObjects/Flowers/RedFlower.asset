@@ -15,7 +15,7 @@ MonoBehaviour:
   flowerName: RedFlower
   icon: {fileID: 21300000, guid: 509c46f5bdad2bf41be13a8379cef23d, type: 3}
   seedIcon: {fileID: 21300000, guid: 4e1063c7b1c733d4fadf3e9c8e1f21f8, type: 3}
-  model: {fileID: 100000, guid: 9533c53e353ae364fa8a54ef7946a9ee, type: 3}
+  model: {fileID: 3660476827281644442, guid: 9c2371d40507bf7489e581774ccdae9d, type: 3}
   seedGrowth: 5
   growth: 10
   potentialSeeds:

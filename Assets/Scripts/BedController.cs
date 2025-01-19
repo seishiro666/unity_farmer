@@ -13,6 +13,11 @@ public class BedController : MonoBehaviour
         bedWork.SetupBed();
     }
 
+    public GameObject GetCurrentBed()
+    {
+        return currentBed;
+    }
+
     public void ClearBed()
     {
         currentBed = null;

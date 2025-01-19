@@ -15,7 +15,7 @@ MonoBehaviour:
   flowerName: RedBlueFlower
   icon: {fileID: 21300000, guid: d3690be90caca79458dc460a28acae69, type: 3}
   seedIcon: {fileID: 21300000, guid: 9ca1862cb69932848b50429b0019243c, type: 3}
-  model: {fileID: 100000, guid: a0482758ae712364ca1b5f7267b38910, type: 3}
+  model: {fileID: 8678015271665624477, guid: 8d4beba9f2906a24aa39216aceb6e58c, type: 3}
   seedGrowth: 10
   growth: 20
   potentialSeeds:
