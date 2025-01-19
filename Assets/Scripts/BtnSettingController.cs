@@ -4,23 +4,25 @@ using UnityEngine;
 
 public class BtnSettingController : MonoBehaviour
 {
-    public GameObject settingOn;
-    public GameObject settingOff;
-
+    [SerializeField] GameObject settingOn;
+    [SerializeField] GameObject settingOff;
+    [SerializeField] PlayerController controller;
     public bool isOn = true;
 
     public void SwapSetting()
     {
         if (isOn) {
-            settingOn.SetActive(true);
-            settingOff.SetActive(false);
+            settingOn.SetActive(false);
+            settingOff.SetActive(true);
             isOn = false;
         }
         else
         {
-            settingOn.SetActive(false);
-            settingOff.SetActive(true);
+            settingOn.SetActive(true);
+            settingOff.SetActive(false);
             isOn = true;
         }
+
+        controller.SaveData();
     }
 }

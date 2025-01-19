@@ -20,3 +20,4 @@ MonoBehaviour:
   growth: 20
   potentialSeeds:
   - {fileID: 11400000}
+  price: 100

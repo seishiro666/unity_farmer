@@ -37,23 +37,7 @@ public class PlayerController : MonoBehaviour
         lvlSlider = lvlObj.transform.GetChild(0).GetComponent<Slider>();
         userLvlText = lvlObj.transform.GetChild(1).transform.GetChild(0).GetComponent<TMP_Text>();
 
-        musicBtnScript.isOn = userData.musicOn;
-        musicBtnScript.SwapSetting();
-        soundBtnScript.isOn = userData.soundOn;
-        soundBtnScript.SwapSetting();
-        musicSlider.value = userData.musicValue;
-        soundSlider.value = userData.soundValue;
-        moneyText.text = userData.money.ToString();
-        lvlSlider.value = userData.lvlProgress;
-        userLvlText.text = userData.lvl.ToString();
-
-        musicOn = userData.musicOn;
-        soundOn = userData.soundOn;
-        musicValue = userData.musicValue;
-        soundValue = userData.soundValue;
-        money = userData.money;
-        lvl = userData.lvl;
-        lvlProgress = userData.lvlProgress;
+        UpdateUserUI();
     }
 
     public void SaveData()
@@ -65,5 +49,33 @@ public class PlayerController : MonoBehaviour
         userData.money = int.Parse(moneyText.text);
         userData.lvl = int.Parse(userLvlText.text);
         userData.lvlProgress = lvlSlider.value;
+
+        UpdateUserUI();
+    }
+
+    void UpdateUserUI()
+    {
+        musicBtnScript.isOn = userData.musicOn;
+        musicBtnScript.SwapSetting();
+        soundBtnScript.isOn = userData.soundOn;
+        soundBtnScript.SwapSetting();
+        musicSlider.value = userData.musicValue;
+        soundSlider.value = userData.soundValue;
+        moneyText.text = userData.money.ToString();
+        lvlSlider.value = userData.lvlProgress;
+        userLvlText.text = userData.lvl.ToString();
+
+        SetData();
+    }
+
+    void SetData()
+    {
+        musicOn = userData.musicOn;
+        soundOn = userData.soundOn;
+        musicValue = userData.musicValue;
+        soundValue = userData.soundValue;
+        money = userData.money;
+        lvl = userData.lvl;
+        lvlProgress = userData.lvlProgress;
     }
 }

@@ -13,9 +13,6 @@ MonoBehaviour:
   m_Name: Inventory
   m_EditorClassIdentifier: 
   inventorySystem:
-  - item: {fileID: 11400000, guid: 3c6047cdc963cc14398b4693e49c6fb7, type: 2}
-    isSeed: 0
-    count: 4
   - item: {fileID: 11400000, guid: d9de3566703514845ab362486a56fb63, type: 2}
     isSeed: 1
     count: 4

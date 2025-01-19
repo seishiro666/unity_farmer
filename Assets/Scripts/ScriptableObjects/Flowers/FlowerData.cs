@@ -11,4 +11,5 @@ public class FlowerData : ScriptableObject
     public float seedGrowth;
     public float growth;
     public List<FlowerData> potentialSeeds;
+    public int price;
 }
