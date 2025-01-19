@@ -6718,7 +6718,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 385999774}
         m_TargetAssemblyTypeName: BtnSettingController, Assembly-CSharp
-        m_MethodName: SwapSetting
+        m_MethodName: SwapSettings
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9650,16 +9650,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   userData: {fileID: 11400000, guid: dd953c68b3aa2fd44918236adcd05b3a, type: 2}
-  soundBtn: {fileID: 1967796610}
-  musicBtn: {fileID: 385999772}
-  soundObj: {fileID: 566395606}
-  musicObj: {fileID: 1447712362}
-  moneyObj: {fileID: 601600623}
-  lvlObj: {fileID: 979480851}
-  musicOn: 0
-  soundOn: 0
-  musicValue: 0
-  soundValue: 0
+  soundBtnScript: {fileID: 1967796612}
+  musicBtnScript: {fileID: 385999774}
+  soundSlider: {fileID: 1393967406}
+  musicSlider: {fileID: 30279026}
+  moneyText: {fileID: 1869788747}
+  lvlSlider: {fileID: 2024253478}
+  userLvlText: {fileID: 124237866}
   lvlProgress: 0
   money: 0
   lvl: 0
@@ -21739,7 +21736,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1967796612}
         m_TargetAssemblyTypeName: BtnSettingController, Assembly-CSharp
-        m_MethodName: SwapSetting
+        m_MethodName: SwapSettings
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

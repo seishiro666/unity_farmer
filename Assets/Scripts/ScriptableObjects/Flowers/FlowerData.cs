@@ -12,4 +12,5 @@ public class FlowerData : ScriptableObject
     public float growth;
     public List<FlowerData> potentialSeeds;
     public int price;
+    public float expReward;
 }

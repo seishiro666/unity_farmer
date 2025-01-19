@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,35 +6,20 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] UserData userData;
 
-    [SerializeField] GameObject soundBtn;
-    [SerializeField] GameObject musicBtn;
-    [SerializeField] GameObject soundObj;
-    [SerializeField] GameObject musicObj;
-    [SerializeField] GameObject moneyObj;
-    [SerializeField] GameObject lvlObj;
+    [SerializeField] BtnSettingController soundBtnScript;
+    [SerializeField] BtnSettingController musicBtnScript;
+    [SerializeField] Slider soundSlider;
+    [SerializeField] Slider musicSlider;
+    [SerializeField] TMP_Text moneyText;
+    [SerializeField] Slider lvlSlider;
+    [SerializeField] TMP_Text userLvlText;
 
-    BtnSettingController soundBtnScript;
-    BtnSettingController musicBtnScript;
-    Slider soundSlider;
-    Slider musicSlider;
-    TMP_Text moneyText;
-    Slider lvlSlider;
-    TMP_Text userLvlText;
-
-    public bool musicOn, soundOn;
-    public float musicValue, soundValue, lvlProgress;
+    public float lvlProgress;
     public int money, lvl;
 
-    void Awake()
+    private void Awake()
     {
-        soundBtnScript = soundBtn.GetComponent<BtnSettingController>();
-        musicBtnScript = musicBtn.GetComponent<BtnSettingController>();
-        soundSlider = soundObj.transform.GetChild(1).GetComponent<Slider>();
-        musicSlider = musicObj.transform.GetChild(1).GetComponent<Slider>();
-        moneyText = moneyObj.transform.GetChild(2).GetComponent<TMP_Text>();
-        lvlSlider = lvlObj.transform.GetChild(0).GetComponent<Slider>();
-        userLvlText = lvlObj.transform.GetChild(1).transform.GetChild(0).GetComponent<TMP_Text>();
-
+        LoadData();
         UpdateUserUI();
     }
 
@@ -46,36 +29,48 @@ public class PlayerController : MonoBehaviour
         userData.soundOn = soundBtnScript.isOn;
         userData.musicValue = musicSlider.value;
         userData.soundValue = soundSlider.value;
-        userData.money = int.Parse(moneyText.text);
-        userData.lvl = int.Parse(userLvlText.text);
-        userData.lvlProgress = lvlSlider.value;
-
-        UpdateUserUI();
+        userData.money = money;
+        userData.lvl = lvl;
+        userData.lvlProgress = lvlProgress;
     }
 
-    void UpdateUserUI()
+    private void LoadData()
     {
-        musicBtnScript.isOn = userData.musicOn;
-        musicBtnScript.SwapSetting();
+        lvlProgress = userData.lvlProgress;
+        money = userData.money;
+        lvl = userData.lvl;
+
         soundBtnScript.isOn = userData.soundOn;
-        soundBtnScript.SwapSetting();
-        musicSlider.value = userData.musicValue;
+        musicBtnScript.isOn = userData.musicOn;
+        soundBtnScript.UpdateState();
+        musicBtnScript.UpdateState();
+    }
+
+    private void UpdateUserUI()
+    {
         soundSlider.value = userData.soundValue;
+        musicSlider.value = userData.musicValue;
         moneyText.text = userData.money.ToString();
         lvlSlider.value = userData.lvlProgress;
         userLvlText.text = userData.lvl.ToString();
-
-        SetData();
     }
 
-    void SetData()
+    public void AddExperience(float amount)
     {
-        musicOn = userData.musicOn;
-        soundOn = userData.soundOn;
-        musicValue = userData.musicValue;
-        soundValue = userData.soundValue;
-        money = userData.money;
-        lvl = userData.lvl;
-        lvlProgress = userData.lvlProgress;
+        lvlProgress += amount;
+        if (lvlProgress >= 1f)
+        {
+            lvlProgress -= 1f;
+            lvl++;
+        }
+        SaveData();
+        UpdateUserUI();
+    }
+
+    public void AddMoney(int amount)
+    {
+        money += amount;
+        SaveData(); 
+        UpdateUserUI();
     }
 }

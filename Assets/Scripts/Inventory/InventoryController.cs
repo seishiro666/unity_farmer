@@ -30,18 +30,12 @@ public class InventoryController : MonoBehaviour
     [Header("Player")]
     [SerializeField] PlayerController playerController;
     [SerializeField] UserData userData;
-    int money;
-    int lvl;
-    float lvlProgress;
 
     public static Action<InventoryItem, GameObject, InventoryController> onBedBtnClick;
 
     private void Awake()
     {
         bedInventoryUI = inventoryUI.transform.GetChild(3);
-        money = userData.money;
-        lvl = userData.lvl;
-        lvlProgress = userData.lvlProgress;
     }
 
     void Update()
@@ -56,10 +50,9 @@ public class InventoryController : MonoBehaviour
         {
             InventoryItem itemToSell = sellSlot.transform.GetChild(0).GetComponent<InventoryItem>();
             InventorySystem itemData = itemToSell.GetInventorySystemData();
-            money += itemData.item.price;
             Destroy(sellSlot.transform.GetChild(0).gameObject);
             inventory.inventorySystem.Remove(itemData);
-            UpdateUserData();
+            playerController.AddMoney(itemData.item.price);
         }
     }
 
@@ -71,16 +64,7 @@ public class InventoryController : MonoBehaviour
             InventorySystem itemData = itemToDelete.GetInventorySystemData();
             Destroy(deleteSlot.transform.GetChild(0).gameObject);
             inventory.inventorySystem.Remove(itemData);
-            UpdateUserData();
         }
-    }
-
-    void UpdateUserData()
-    {
-        userData.money = money;
-        userData.lvl = lvl;
-        userData.lvlProgress = lvlProgress;
-        playerController.SaveData();
     }
 
     void UpdateSlots(int typeOfItems, string actionBtnText)
@@ -169,6 +153,8 @@ public class InventoryController : MonoBehaviour
             curBed.SwapState();
         } else
         {
+            float exp = invSystem.item.expReward;
+            playerController.AddExperience(exp);
             ResetState();
             curBed.ClearBed();
         }
@@ -239,6 +225,7 @@ public class InventoryController : MonoBehaviour
     void BuyItemFromShop(InventorySystem tempInvSystem)
     {
         tempInvSystem.count = 4;
+        playerController.AddMoney(-tempInvSystem.item.price);
         AddItemToInventory(tempInvSystem);
     }
 

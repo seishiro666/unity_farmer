@@ -23,3 +23,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3c6047cdc963cc14398b4693e49c6fb7, type: 2}
   - {fileID: 11400000, guid: eb7faf7012f7eb14b810c785b731257c, type: 2}
   price: 50
+  expReward: 0.1

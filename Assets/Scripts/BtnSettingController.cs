@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BtnSettingController : MonoBehaviour
@@ -7,22 +5,24 @@ public class BtnSettingController : MonoBehaviour
     [SerializeField] GameObject settingOn;
     [SerializeField] GameObject settingOff;
     [SerializeField] PlayerController controller;
+
     public bool isOn = true;
 
-    public void SwapSetting()
+    private void Start()
     {
-        if (isOn) {
-            settingOn.SetActive(false);
-            settingOff.SetActive(true);
-            isOn = false;
-        }
-        else
-        {
-            settingOn.SetActive(true);
-            settingOff.SetActive(false);
-            isOn = true;
-        }
+        UpdateState();
+    }
 
+    public void SwapSettings()
+    {
+        isOn = !isOn;
         controller.SaveData();
+        UpdateState();
+    }
+
+    public void UpdateState()
+    {
+        settingOn.SetActive(isOn);
+        settingOff.SetActive(!isOn);
     }
 }

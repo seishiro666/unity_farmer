@@ -21,3 +21,4 @@ MonoBehaviour:
   potentialSeeds:
   - {fileID: 11400000}
   price: 100
+  expReward: 0.2
