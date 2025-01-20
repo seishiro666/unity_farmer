@@ -214,9 +214,9 @@ public class InventoryController : MonoBehaviour
             tempInvItem.flowerData = shopData[i];
             InventorySystem tempInvSystem = new InventorySystem();
             tempInvSystem.item = shopData[i];
-            tempInvSystem.isSeed = false;
+            tempInvSystem.isSeed = true;
             tempInvSystem.count = 50;
-            tempInvItem.SetupSlot(tempInvSystem.item.icon, tempInvSystem.count, tempInvSystem);
+            tempInvItem.SetupSlot(tempInvSystem.item.seedIcon, tempInvSystem.count, tempInvSystem);
             shopObjects[i].GetComponent<Button>().onClick.RemoveAllListeners();
             shopObjects[i].GetComponent<Button>().onClick.AddListener( delegate { BuyItemFromShop(tempInvSystem); });
         }

@@ -5,8 +5,10 @@ using UnityEngine.UIElements;
 
 public class BedSpawner : MonoBehaviour
 {
-    public GameObject bedPrefab;
-    public GameObject bedsGrid;
+    [SerializeField] GameObject bedPrefab;
+    [SerializeField] GameObject bedsGrid;
+    [SerializeField] UserData userData;
+
     float spacingColumn = -4.5f;
     float spacingRows = 5f;
     int rows, cols;
@@ -15,10 +17,10 @@ public class BedSpawner : MonoBehaviour
     {
         rows = 2;
         cols = 3;
-        SpawnBeds(rows, cols);
+        SetupBedCount(userData.lvl);
     }
 
-    void SpawnBeds(int rows, int columns)
+    public void SpawnBeds(int rows, int columns)
     {
         for (int row = 0; row < rows; row++)
         {
@@ -26,7 +28,7 @@ public class BedSpawner : MonoBehaviour
             {
                 Vector3 position = new Vector3(
                     column * spacingColumn,
-                    0,
+                    0.16f,
                     row * spacingRows
                 );
 
@@ -34,5 +36,15 @@ public class BedSpawner : MonoBehaviour
                 bed.transform.localPosition = position;
             }
         }
+    }
+
+    public void SetupBedCount(int lvl)
+    {
+        rows = 2; cols = 3;
+        if (lvl > 1 && lvl < 5)
+        {
+            rows += lvl - 1;
+        }
+        SpawnBeds(rows, cols);
     }
 }
