@@ -18,4 +18,4 @@ MonoBehaviour:
     count: 4
   - item: {fileID: 11400000, guid: 288416500ecb3e44e9b54e7ec1574585, type: 2}
     isSeed: 1
-    count: 4
+    count: 8

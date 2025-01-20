@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class BedSpawner : MonoBehaviour
 {
@@ -15,8 +14,9 @@ public class BedSpawner : MonoBehaviour
 
     public void StartSpawn()
     {
-        rows = 2;
         cols = 3;
+        rows = 2;
+
         SetupBedCount(userData.lvl);
     }
 
@@ -40,11 +40,15 @@ public class BedSpawner : MonoBehaviour
 
     public void SetupBedCount(int lvl)
     {
-        rows = 2; cols = 3;
+        cols = 3;
+        rows = 2;
+
         if (lvl > 1 && lvl < 5)
         {
-            rows += lvl - 1;
+            int additionalBeds = (lvl - 1) * 3;
+            rows = Mathf.CeilToInt((float)(6 + additionalBeds) / cols);
         }
+
         SpawnBeds(rows, cols);
     }
 }

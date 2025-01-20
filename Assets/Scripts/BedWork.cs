@@ -28,6 +28,7 @@ public class BedWork : MonoBehaviour
     GameObject bedSlot;
     GameObject itemPrefab;
     InventoryController inventoryController;
+    InventorySystem inventorySystem;
 
     public void SetupBed()
     {
@@ -37,10 +38,13 @@ public class BedWork : MonoBehaviour
             OnSetup();
         } else if (currentState == State.MaturePlant)
         {
-            onBedClick?.Invoke(1, "Собрать");
+            CollectSeeds();
+            inventorySystem = null;
+            SwapState();
         } else if (currentState == State.End)
         {
-            onBedClick?.Invoke(1, "Собрать");
+            CollectFlowers();
+            ClearBed();
         }
     }
 
@@ -100,8 +104,23 @@ public class BedWork : MonoBehaviour
         currentState = State.MaturePlant;
 
         haveSeed = true;
+        FlowerData seedData = itemData.flowerData.potentialSeeds[RndSeedSpawn(itemData)];
+        InventorySystem seedInventorySystem = new InventorySystem();
+        seedInventorySystem.item = seedData;
+        seedInventorySystem.count = 4;
+        seedInventorySystem.isSeed = true;
+        inventorySystem = seedInventorySystem;
+    }
+
+    void CollectSeeds()
+    {
+        inventoryController.AddItemToInventory(inventorySystem);
+    }
+
+    int RndSeedSpawn(InventoryItem itemData)
+    {
         int seedNum = -1;
-        
+
         if (itemData.flowerData.potentialSeeds.Count > 1)
         {
             int rndSeed = UnityEngine.Random.Range(1, 11);
@@ -109,28 +128,25 @@ public class BedWork : MonoBehaviour
             if (rndSeed >= 1 && rndSeed <= 6)
             {
                 seedNum = 0;
-            } else if (rndSeed >= 7 && rndSeed <= 8)
+            }
+            else if (rndSeed >= 7 && rndSeed <= 8)
             {
                 seedNum = 1;
-            } else if (rndSeed >= 9 && rndSeed <= 10)
+            }
+            else if (rndSeed >= 9 && rndSeed <= 10)
             {
                 seedNum = 2;
             }
-        } else
+        }
+        else
         {
             seedNum = 0;
         }
 
-        FlowerData seedData = itemData.flowerData.potentialSeeds[seedNum];
-        InventorySystem seedInventorySystem = new InventorySystem();
-        seedInventorySystem.item = seedData;
-        seedInventorySystem.count = 4;
-        seedInventorySystem.isSeed = true;
-
-        inventoryController.AddItemToBedSlot(seedInventorySystem, gameObject.GetComponent<BedWork>(), false);
+        return seedNum;
     }
 
-    public void SwapState()
+    void SwapState()
     {
         haveSeed = false;
         StartCoroutine(EndGrowth());
@@ -155,17 +171,23 @@ public class BedWork : MonoBehaviour
             seedInventorySystem.item = flowerData;
             seedInventorySystem.count = 4;
             seedInventorySystem.isSeed = false;
-
-            inventoryController.AddItemToBedSlot(seedInventorySystem, gameObject.GetComponent<BedWork>(), true);
+            inventorySystem = seedInventorySystem;
         }
     }
 
-    public void ClearBed()
+    void CollectFlowers()
+    {
+        inventoryController.playerController.AddExperience(inventorySystem.item.expReward);
+        inventoryController.AddItemToInventory(inventorySystem);
+    }
+
+    void ClearBed()
     {
         StopAllCoroutines();
 
         currentState = State.Empty;
         haveSeed = false;
+        inventorySystem = null;
 
         foreach (Transform flower in flowerPos.transform)
         {
@@ -186,6 +208,11 @@ public class BedWork : MonoBehaviour
         flowerObj = null;
 
         OnEndSetup();
+    }
+
+    public FlowerData GetFlowerData()
+    {
+        return flowerData;
     }
 
     private void OnSetup()

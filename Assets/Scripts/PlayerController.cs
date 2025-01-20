@@ -4,8 +4,11 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header ("Scripts")]
     [SerializeField] UserData userData;
+    [SerializeField] BedSpawner bedSpawner;
 
+    [Header ("UI")]
     [SerializeField] BtnSettingController soundBtnScript;
     [SerializeField] BtnSettingController musicBtnScript;
     [SerializeField] Slider soundSlider;
@@ -62,6 +65,7 @@ public class PlayerController : MonoBehaviour
         {
             lvlProgress -= 1f;
             lvl++;
+            bedSpawner.SetupBedCount(lvl);
         }
         SaveData();
         UpdateUserUI();
