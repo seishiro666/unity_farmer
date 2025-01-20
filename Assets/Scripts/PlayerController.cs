@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +18,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Slider lvlSlider;
     [SerializeField] TMP_Text userLvlText;
 
+    [Header ("Extra")]
+    [SerializeField] SoundController soundController;
+
     public float lvlProgress;
     public int money, lvl;
 
@@ -35,6 +39,8 @@ public class PlayerController : MonoBehaviour
         userData.money = money;
         userData.lvl = lvl;
         userData.lvlProgress = lvlProgress;
+
+        CheckSoundAndMusic();
     }
 
     private void LoadData()
@@ -47,6 +53,8 @@ public class PlayerController : MonoBehaviour
         musicBtnScript.isOn = userData.musicOn;
         soundBtnScript.UpdateState();
         musicBtnScript.UpdateState();
+
+        CheckSoundAndMusic();
     }
 
     private void UpdateUserUI()
@@ -56,6 +64,23 @@ public class PlayerController : MonoBehaviour
         moneyText.text = userData.money.ToString();
         lvlSlider.value = userData.lvlProgress;
         userLvlText.text = userData.lvl.ToString();
+    }
+
+    void CheckSoundAndMusic()
+    {
+        if (userData.soundOn)
+        {
+            soundController.SetupSoundVolume(userData.soundValue);
+        }
+
+        if (userData.musicOn)
+        {
+            soundController.SetupMusicVolume(userData.musicValue);
+            soundController.StartMusic();
+        } else
+        {
+            soundController.StopMusic();
+        }
     }
 
     public void AddExperience(float amount)

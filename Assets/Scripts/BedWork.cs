@@ -104,12 +104,7 @@ public class BedWork : MonoBehaviour
         currentState = State.MaturePlant;
 
         haveSeed = true;
-        FlowerData seedData = itemData.flowerData.potentialSeeds[RndSeedSpawn(itemData)];
-        InventorySystem seedInventorySystem = new InventorySystem();
-        seedInventorySystem.item = seedData;
-        seedInventorySystem.count = 4;
-        seedInventorySystem.isSeed = true;
-        inventorySystem = seedInventorySystem;
+        RndSeedSpawn();
     }
 
     void CollectSeeds()
@@ -117,34 +112,97 @@ public class BedWork : MonoBehaviour
         inventoryController.AddItemToInventory(inventorySystem);
     }
 
-    int RndSeedSpawn(InventoryItem itemData)
+    void RndSeedSpawn()
     {
-        int seedNum = -1;
+        List<FlowerData> neighboringSeeds = new List<FlowerData>();
+        Vector2[] directions = { Vector2.up, Vector2.down, Vector2.left, Vector2.right };
 
-        if (itemData.flowerData.potentialSeeds.Count > 1)
+        foreach (var direction in directions)
         {
-            int rndSeed = UnityEngine.Random.Range(1, 11);
+            BedWork neighboringBed = GetNeighboringBed(direction);
 
-            if (rndSeed >= 1 && rndSeed <= 6)
+            if (neighboringBed != null && neighboringBed.currentState == State.SeedPlanted)
             {
-                seedNum = 0;
+                neighboringSeeds.Add(neighboringBed.GetFlowerData());
             }
-            else if (rndSeed >= 7 && rndSeed <= 8)
+        }
+
+        if (neighboringSeeds.Count > 0)
+        {
+            bool combineSeeds = UnityEngine.Random.Range(0f, 1f) < 0.5f;
+
+            if (combineSeeds)
             {
-                seedNum = 1;
+                CombineSeeds(neighboringSeeds);
             }
-            else if (rndSeed >= 9 && rndSeed <= 10)
+            else
             {
-                seedNum = 2;
+                int randomSeedIndex = UnityEngine.Random.Range(0, neighboringSeeds.Count);
+                InventorySystem seedInventorySystem = new InventorySystem
+                {
+                    item = neighboringSeeds[randomSeedIndex],
+                    count = 4,
+                    isSeed = true
+                };
+
+                inventorySystem = seedInventorySystem;
             }
         }
         else
         {
-            seedNum = 0;
+            int seedNum = 0;
+            InventorySystem seedInventorySystem = new InventorySystem
+            {
+                item = flowerData.potentialSeeds[seedNum],
+                count = 4,
+                isSeed = true
+            };
+
+            inventorySystem = seedInventorySystem;
+        }
+    }
+
+    BedWork GetNeighboringBed(Vector2 direction)
+    {
+        Vector3 neighborPosition = transform.position + new Vector3(direction.x, 0, direction.y);
+
+        BedWork[] allBeds = FindObjectsOfType<BedWork>();
+
+        foreach (var bed in allBeds)
+        {
+            if (Vector3.Distance(neighborPosition, bed.transform.position) < 5f)
+            {
+                return bed;
+            }
         }
 
-        return seedNum;
+        return null;
     }
+
+    void CombineSeeds(List<FlowerData> neighboringSeeds)
+    {
+        int randomNeighborIndex = UnityEngine.Random.Range(0, neighboringSeeds.Count);
+        FlowerData selectedSeed = neighboringSeeds[randomNeighborIndex];
+
+        string currentFlowerName = flowerData.name.Replace("Flower", "");
+        string neighborFlowerName = selectedSeed.name.Replace("Flower", "");
+
+        FlowerData combinedSeed = flowerData.potentialSeeds.Find(seed =>
+            seed.name.Contains(currentFlowerName) && seed.name.Contains(neighborFlowerName));
+
+        if (combinedSeed != null)
+        {
+            InventorySystem combinedSeedSystem = new InventorySystem
+            {
+                item = combinedSeed,
+                count = 4,
+                isSeed = true
+            };
+
+            inventorySystem = combinedSeedSystem;
+        }
+    }
+
 
     void SwapState()
     {

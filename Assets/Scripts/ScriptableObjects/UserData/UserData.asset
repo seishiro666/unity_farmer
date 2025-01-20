@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   musicOn: 1
   soundOn: 1
-  musicVolume: 0.5
-  soundVolume: 0.5
-  coin: 150
+  musicValue: 0.5
+  soundValue: 0.5
+  money: 150
   lvl: 1
   lvlProgress: 0
