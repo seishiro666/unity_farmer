@@ -23,9 +23,11 @@ public class InventoryController : MonoBehaviour
 
     [Header("Shop")]
     [SerializeField] GameObject shopUI;
-    [SerializeField] List<GameObject> shopObjects;
-    [SerializeField] List<FlowerData> shopData;
+    [SerializeField] GameObject shopSlotPrefab;
+    [SerializeField] GameObject shopSlotsUI;
+    public List<FlowerData> shopData;
     [SerializeField] GameObject shopItemPrefab;
+    [SerializeField] List<GameObject> shopObjects = new List<GameObject>();
 
     [Header("Sell/Delete")]
     [SerializeField] GameObject sellSlot;
@@ -209,6 +211,20 @@ public class InventoryController : MonoBehaviour
 
     public void CollectItemsFromShop()
     {
+        if (shopObjects.Count != 0)
+        {
+            foreach (GameObject slotObject in shopObjects)
+            {
+                Destroy(slotObject);
+            }
+        }
+
+        for (int j = 0; j < shopData.Count; j++)
+        {
+            GameObject tempSlot = Instantiate(shopSlotPrefab, shopSlotsUI.transform);
+            shopObjects.Add(tempSlot);
+        }
+
         for (int i = 0; i < shopObjects.Count; i++)
         {
             GameObject tempItem = Instantiate(shopItemPrefab, shopObjects[i].transform);
@@ -223,7 +239,8 @@ public class InventoryController : MonoBehaviour
             };
 
             tempInvItem.SetupSlot(tempInvSystem.item.seedIcon, tempInvSystem.count, tempInvSystem);
-            shopObjects[i].GetComponent<Button>().onClick.AddListener( delegate { BuyItemFromShop(tempInvSystem); } );
+            tempInvItem.RefreshItem(tempInvSystem.item.price);
+            shopObjects[i].GetComponent<Button>().onClick.AddListener(delegate { BuyItemFromShop(tempInvSystem); });
         }
 
         shopUI.SetActive(true);

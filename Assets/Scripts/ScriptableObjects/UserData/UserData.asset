@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9eee65f6e7acd545acdd7b129378323, type: 3}
   m_Name: UserData
   m_EditorClassIdentifier: 
-  musicOn: 1
+  musicOn: 0
   soundOn: 1
-  musicValue: 0.5
+  musicValue: 0.21782185
   soundValue: 0.5
   money: 150
   lvl: 1

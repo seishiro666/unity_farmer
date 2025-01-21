@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +9,8 @@ public class PlayerController : MonoBehaviour
     [Header ("Scripts")]
     [SerializeField] UserData userData;
     [SerializeField] BedSpawner bedSpawner;
+    [SerializeField] SoundController soundController;
+    [SerializeField] InventoryController inventoryController;
 
     [Header ("UI")]
     [SerializeField] BtnSettingController soundBtnScript;
@@ -18,8 +21,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Slider lvlSlider;
     [SerializeField] TMP_Text userLvlText;
 
-    [Header ("Extra")]
-    [SerializeField] SoundController soundController;
+    [Header("Extra")]
+    [SerializeField] ShopConfig shopConfig;
 
     public float lvlProgress;
     public int money, lvl;
@@ -54,7 +57,44 @@ public class PlayerController : MonoBehaviour
         soundBtnScript.UpdateState();
         musicBtnScript.UpdateState();
 
+        CheckItemsForShop();
         CheckSoundAndMusic();
+    }
+
+    void CheckItemsForShop()
+    {
+        if (lvl >= 1 && lvl < 5)
+        {
+            List<FlowerData> newItemInShop = new List<FlowerData>();
+
+            if (lvl >= 1)
+            {
+                newItemInShop.Add(shopConfig.shopConfigData[0]);
+                newItemInShop.Add(shopConfig.shopConfigData[1]);
+                newItemInShop.Add(shopConfig.shopConfigData[2]);
+            }
+
+            switch (lvl)
+            {
+                case 2:
+                    newItemInShop.Add(shopConfig.shopConfigData[3]);
+                    break;
+                case 3:
+                    newItemInShop.Add(shopConfig.shopConfigData[3]);
+                    newItemInShop.Add(shopConfig.shopConfigData[4]);
+                    break;
+                case 4:
+                    newItemInShop.Add(shopConfig.shopConfigData[3]);
+                    newItemInShop.Add(shopConfig.shopConfigData[4]);
+                    newItemInShop.Add(shopConfig.shopConfigData[5]);
+                    break;
+            }
+
+            foreach (FlowerData item in newItemInShop)
+            {
+                inventoryController.shopData.Add(item);
+            }
+        }
     }
 
     private void UpdateUserUI()
