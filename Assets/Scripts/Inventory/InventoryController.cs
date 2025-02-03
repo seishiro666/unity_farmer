@@ -274,6 +274,20 @@ public class InventoryController : MonoBehaviour
         }
     }
 
+    public void OffShopUI()
+    {
+        shopUI.SetActive(false);
+        shopObjects.Clear();
+
+        if (shopSlotsUI.transform.childCount > 0)
+        {
+            for (int i = 0; i < shopSlotsUI.transform.childCount; i++)
+            {
+                Destroy(shopSlotsUI.transform.GetChild(i).gameObject);
+            }
+        }
+    }
+
     // Метод для обработки нажатия на кровать
     void OnBedClicked(int numOfItem, string actionBtnText)
     {
@@ -282,6 +296,7 @@ public class InventoryController : MonoBehaviour
 
     private void OnEnable()
     {
+        shopObjects.Clear();
         BedWork.onBedClick += OnBedClicked; // Подписываемся на событие нажатия на кровать
     }
 
