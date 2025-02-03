@@ -4,77 +4,81 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
+// Класс, отвечающий за управление инвентарем игрока
 public class InventoryController : MonoBehaviour
 {
-    [Header("Script")]
-    [SerializeField] BedController bedController;
+    [Header("Скрипты")]
+    [SerializeField] BedController bedController; // Контроллер кровати
 
-    [Header("Inventory")]
-    [SerializeField] GameObject inventoryUI;
-    public Inventory inventory;
-    [SerializeField] List<GameObject> slotObjects;
-    [SerializeField] GameObject itemPrefab;
-    int MaxStackSize = 32;
-    Transform bedInventoryUI;
+    [Header("Инвентарь")]
+    [SerializeField] GameObject inventoryUI; // UI инвентаря
+    public Inventory inventory; // Система инвентаря
+    [SerializeField] List<GameObject> slotObjects; // Слоты для предметов
+    [SerializeField] GameObject itemPrefab; // Префаб предмета
+    int MaxStackSize = 32; // Максимальный размер стека
+    Transform bedInventoryUI; // UI для инвентаря кровати
 
-    [Header("Player")]
-    public PlayerController playerController;
-    [SerializeField] UserData userData;
+    [Header("Игрок")]
+    public PlayerController playerController; // Контроллер игрока
+    [SerializeField] UserData userData; // Данные пользователя
 
-    [Header("Shop")]
-    [SerializeField] GameObject shopUI;
-    [SerializeField] GameObject shopSlotPrefab;
-    [SerializeField] GameObject shopSlotsUI;
-    public List<FlowerData> shopData;
-    [SerializeField] GameObject shopItemPrefab;
-    [SerializeField] List<GameObject> shopObjects = new List<GameObject>();
+    [Header("Магазин")]
+    [SerializeField] GameObject shopUI; // UI магазина
+    [SerializeField] GameObject shopSlotPrefab; // Префаб слота магазина
+    [SerializeField] GameObject shopSlotsUI; // UI слотов магазина
+    public List<FlowerData> shopData; // Данные о цветах в магазине
+    [SerializeField] GameObject shopItemPrefab; // Префаб предмета магазина
+    [SerializeField] List<GameObject> shopObjects = new List<GameObject>(); // Список объектов магазина
 
-    [Header("Sell/Delete")]
-    [SerializeField] GameObject sellSlot;
-    [SerializeField] GameObject deleteSlot;
-    [SerializeField] GameObject bedSlot;
+    [Header("Продажа/Удаление")]
+    [SerializeField] GameObject sellSlot; // Слот для продажи
+    [SerializeField] GameObject deleteSlot; // Слот для удаления
+    [SerializeField] GameObject bedSlot; // Слот для кровати
 
-    public static Action<InventoryItem, GameObject, InventoryController> onBedBtnClick;
+    public static Action<InventoryItem, GameObject, InventoryController> onBedBtnClick; // Событие нажатия на кнопку кровати
 
     private void Awake()
     {
-        bedInventoryUI = inventoryUI.transform.GetChild(3);
+        bedInventoryUI = inventoryUI.transform.GetChild(3); // Получаем UI инвентаря кровати
     }
 
     void Update()
     {
-        HandleSellSlot();
-        HandleDeleteSlot();
+        HandleSellSlot(); // Обрабатываем слот для продажи
+        HandleDeleteSlot(); // Обрабатываем слот для удаления
     }
 
+    // Метод для обработки слота продажи
     void HandleSellSlot()
     {
         if (sellSlot.transform.childCount > 0)
         {
-            InventoryItem itemToSell = sellSlot.transform.GetChild(0).GetComponent<InventoryItem>();
-            InventorySystem itemData = itemToSell.GetInventorySystemData();
-            Destroy(sellSlot.transform.GetChild(0).gameObject);
-            inventory.inventorySystem.Remove(itemData);
-            playerController.AddMoney(Mathf.CeilToInt(itemData.item.price * (itemData.count / 4)));
+            InventoryItem itemToSell = sellSlot.transform.GetChild(0).GetComponent<InventoryItem>(); // Получаем предмет для продажи
+            InventorySystem itemData = itemToSell.GetInventorySystemData(); // Получаем данные о предмете
+            Destroy(sellSlot.transform.GetChild(0).gameObject); // Удаляем предмет из слота
+            playerController.AddMoney(Mathf.CeilToInt(itemData.item.price * (itemData.count / 4))); // Добавляем деньги игроку
         }
     }
 
+    // Метод для обработки слота удаления
     void HandleDeleteSlot()
     {
         if (deleteSlot.transform.childCount > 0)
         {
-            InventoryItem itemToDelete = deleteSlot.transform.GetChild(0).GetComponent<InventoryItem>();
-            InventorySystem itemData = itemToDelete.GetInventorySystemData();
-            Destroy(deleteSlot.transform.GetChild(0).gameObject);
-            inventory.inventorySystem.Remove(itemData);
+            InventoryItem itemToDelete = deleteSlot.transform.GetChild(0).GetComponent<InventoryItem>(); // Получаем предмет для удаления
+            InventorySystem itemData = itemToDelete.GetInventorySystemData(); // Получаем данные о предмете
+            Destroy(deleteSlot.transform.GetChild(0).gameObject); // Удаляем предмет из слота
+            inventory.inventorySystem.Remove(itemData); // Удаляем предмет из инвентаря
         }
     }
 
+    // Метод для обновления слотов инвентаря
     void UpdateSlots(int typeOfItems = 1, string actionBtnText = "1")
     {
-        ClearSlots();
-        InventorySystem itemData = null;
+        ClearSlots(); // Очищаем слоты
+        InventorySystem itemData = null; // Данные о предмете
 
+        // Обновляем слоты в инвентаре
         for (int i = 0; i < inventory.inventorySystem.Count; i++)
         {
             if (i < slotObjects.Count)
@@ -83,12 +87,13 @@ public class InventoryController : MonoBehaviour
 
                 if (itemData.count <= 0)
                 {
-                    inventory.inventorySystem.RemoveAt(i);
+                    inventory.inventorySystem.RemoveAt(i); // Удаляем пустые предметы
                     break;
                 }
 
                 GameObject slot = slotObjects[i];
 
+                // Проверяем тип предмета и создаем соответствующий UI
                 if (typeOfItems == 0 && itemData.isSeed)
                 {
                     GameObject tempItem = Instantiate(itemPrefab, slot.transform);
@@ -104,17 +109,19 @@ public class InventoryController : MonoBehaviour
                 }
             }
 
-            inventoryUI.SetActive(true);
+            inventoryUI.SetActive(true); // Активируем UI инвентаря
         }
 
+        // Обновляем текст кнопки действия
         bedInventoryUI.GetChild(1).GetChild(0).GetComponent<TMP_Text>().text = actionBtnText;
 
+        // Проверяем тип предметов для отображения UI
         if (typeOfItems == 0)
         {
             inventoryUI.transform.localPosition = new Vector3(200, 0, 0);
             bedInventoryUI.gameObject.SetActive(true);
             bedInventoryUI.GetChild(1).GetComponent<Button>().onClick.RemoveAllListeners();
-            bedInventoryUI.GetChild(1).GetComponent<Button>().onClick.AddListener( delegate { SubToBedBtnEvent(itemData); } );
+            bedInventoryUI.GetChild(1).GetComponent<Button>().onClick.AddListener(delegate { SubToBedBtnEvent(itemData); });
         }
         else
         {
@@ -123,36 +130,40 @@ public class InventoryController : MonoBehaviour
         }
     }
 
+    // Метод для обновления инвентаря по нажатию кнопки
     public void UpdateInventoryFromBtn()
     {
-        UpdateSlots();
+        UpdateSlots(); // Обновляем слоты
     }
 
+    // Метод для добавления предмета в инвентарь
     public void AddItemToInventory(InventorySystem newItem)
     {
-        bool itemAdded = false;
+        bool itemAdded = false; // Флаг для проверки добавления предмета
 
+        // Проверяем, есть ли уже такой предмет в инвентаре
         foreach (var existingItem in inventory.inventorySystem)
         {
             if (existingItem.item == newItem.item && existingItem.isSeed == newItem.isSeed)
             {
-                int availableSpace = MaxStackSize - existingItem.count;
+                int availableSpace = MaxStackSize - existingItem.count; // Проверяем доступное место
 
                 if (availableSpace > 0)
                 {
-                    int amountToAdd = Mathf.Min(newItem.count, availableSpace);
-                    existingItem.count += amountToAdd;
-                    newItem.count -= amountToAdd;
+                    int amountToAdd = Mathf.Min(newItem.count, availableSpace); // Вычисляем количество для добавления
+                    existingItem.count += amountToAdd; // Увеличиваем количество существующего предмета
+                    newItem.count -= amountToAdd; // Уменьшаем количество нового предмета
 
                     if (newItem.count <= 0)
                     {
-                        itemAdded = true;
+                        itemAdded = true; // Предмет добавлен
                         break;
                     }
                 }
             }
         }
 
+        // Добавляем новый предмет в инвентарь
         while (newItem.count > 0 && !itemAdded)
         {
             InventorySystem newStack = new InventorySystem
@@ -162,24 +173,26 @@ public class InventoryController : MonoBehaviour
                 isSeed = newItem.isSeed
             };
 
-            newItem.count -= newStack.count;
-            inventory.inventorySystem.Add(newStack);
+            newItem.count -= newStack.count; // Уменьшаем количество нового предмета
+            inventory.inventorySystem.Add(newStack); // Добавляем новый стек в инвентарь
         }
     }
 
+    // Метод для обработки нажатия кнопки кровати
     void SubToBedBtnEvent(InventorySystem itemInventoryData)
     {
         if (bedSlot.transform.childCount > 0 && bedSlot.transform.GetChild(0).GetComponent<InventoryItem>().itemCount >= 4)
         {
-            onBedBtnClick?.Invoke(bedSlot.transform.GetChild(0).GetComponent<InventoryItem>(), bedSlot, gameObject.GetComponent<InventoryController>());
-            UpdateSlots();
+            onBedBtnClick?.Invoke(bedSlot.transform.GetChild(0).GetComponent<InventoryItem>(), bedSlot, gameObject.GetComponent<InventoryController>()); // Вызываем событие нажатия на кнопку кровати
+            UpdateSlots(); // Обновляем слоты
             if (bedSlot.transform.childCount > 0)
             {
-                Destroy(bedSlot.transform.GetChild(0).gameObject);
+                Destroy(bedSlot.transform.GetChild(0).gameObject); // Удаляем предмет из слота кровати
             }
         }
     }
 
+    // Метод для очистки слотов
     void ClearSlots()
     {
         foreach (GameObject slotObject in slotObjects)
@@ -188,11 +201,12 @@ public class InventoryController : MonoBehaviour
             {
                 for (int i = 0; i < slotObject.transform.childCount; i++)
                 {
-                    Destroy(slotObject.transform.GetChild(i).gameObject);
+                    Destroy(slotObject.transform.GetChild(i).gameObject); // Удаляем предметы из слотов
                 }
             }
         }
 
+        // Очищаем слоты для продажи, удаления и кровати
         if (sellSlot.transform.childCount > 0)
         {
             Destroy(sellSlot.transform.GetChild(0).gameObject);
@@ -209,22 +223,25 @@ public class InventoryController : MonoBehaviour
         }
     }
 
+    // Метод для сбора предметов из магазина
     public void CollectItemsFromShop()
     {
         if (shopObjects.Count != 0)
         {
             foreach (GameObject slotObject in shopObjects)
             {
-                Destroy(slotObject);
+                Destroy(slotObject); // Удаляем старые слоты
             }
         }
 
+        // Создаем новые слоты для предметов в магазине
         for (int j = 0; j < shopData.Count; j++)
         {
             GameObject tempSlot = Instantiate(shopSlotPrefab, shopSlotsUI.transform);
             shopObjects.Add(tempSlot);
         }
 
+        // Заполняем слоты предметами
         for (int i = 0; i < shopObjects.Count; i++)
         {
             GameObject tempItem = Instantiate(shopItemPrefab, shopObjects[i].transform);
@@ -238,37 +255,38 @@ public class InventoryController : MonoBehaviour
                 count = 50
             };
 
-            tempInvItem.SetupSlot(tempInvSystem.item.seedIcon, tempInvSystem.count, tempInvSystem);
-            tempInvItem.RefreshItem(tempInvSystem.item.price);
-            shopObjects[i].GetComponent<Button>().onClick.AddListener(delegate { BuyItemFromShop(tempInvSystem); });
+            tempInvItem.SetupSlot(tempInvSystem.item.seedIcon, tempInvSystem.count, tempInvSystem); // Настраиваем слот
+            tempInvItem.RefreshItem(tempInvSystem.item.price); // Обновляем цену
+            shopObjects[i].GetComponent<Button>().onClick.AddListener(delegate { BuyItemFromShop(tempInvSystem); }); // Добавляем обработчик нажатия
         }
 
-        shopUI.SetActive(true);
+        shopUI.SetActive(true); // Активируем UI магазина
     }
 
+    // Метод для покупки предмета из магазина
     void BuyItemFromShop(InventorySystem tempInvSystem)
     {
-        if (playerController.money >= tempInvSystem.item.price)
+        if (playerController.money >= tempInvSystem.item.price) // Проверяем, достаточно ли денег
         {
-            tempInvSystem.count = 4;
-            playerController.AddMoney(-tempInvSystem.item.price);
-            AddItemToInventory(tempInvSystem);
+            tempInvSystem.count = 4; // Устанавливаем количество
+            playerController.AddMoney(-tempInvSystem.item.price); // Уменьшаем деньги игрока
+            AddItemToInventory(tempInvSystem); // Добавляем предмет в инвентарь
         }
     }
 
+    // Метод для обработки нажатия на кровать
     void OnBedClicked(int numOfItem, string actionBtnText)
     {
-        UpdateSlots(numOfItem, actionBtnText);
+        UpdateSlots(numOfItem, actionBtnText); // Обновляем слоты
     }
-
 
     private void OnEnable()
     {
-        BedWork.onBedClick += OnBedClicked;
+        BedWork.onBedClick += OnBedClicked; // Подписываемся на событие нажатия на кровать
     }
 
     private void OnDisable()
     {
-        BedWork.onBedClick -= OnBedClicked;
+        BedWork.onBedClick -= OnBedClicked; // Отписываемся от события нажатия на кровать
     }
 }
