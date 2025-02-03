@@ -66,10 +66,5 @@ public class CameraMove : MonoBehaviour
                 }
             }
         }
-
-        //if (Input.GetMouseButtonDown(1))
-        //{
-        //    bedController.ClearBed();
-        //}
     }
 }

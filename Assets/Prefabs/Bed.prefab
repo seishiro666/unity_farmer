@@ -162,6 +162,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flowerPos: {fileID: 4867619304830106440}
+  currentState: 0
+  haveSeed: 0
 --- !u!1 &4867619304830106440
 GameObject:
   m_ObjectHideFlags: 0
