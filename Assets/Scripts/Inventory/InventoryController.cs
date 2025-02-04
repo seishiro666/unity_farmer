@@ -57,6 +57,7 @@ public class InventoryController : MonoBehaviour
             InventorySystem itemData = itemToSell.GetInventorySystemData(); // Получаем данные о предмете
             Destroy(sellSlot.transform.GetChild(0).gameObject); // Удаляем предмет из слота
             playerController.AddMoney(Mathf.CeilToInt(itemData.item.price * (itemData.count / 4))); // Добавляем деньги игроку
+            inventory.inventorySystem.Remove(itemData);
         }
     }
 
